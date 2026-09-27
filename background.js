@@ -65,12 +65,13 @@ async function saveCurrentTabs() {
                 };
             });
 
+            const isMaximized = win.state === 'maximized';
             const winData = {
                 state: win.state === 'minimized' ? 'normal' : win.state,
                 left: win.left,
                 top: win.top,
-                width: win.width,
-                height: win.height,
+                width: isMaximized ? 1100 : win.width,
+                height: isMaximized ? 700 : win.height,
                 tabs: tabsData
             };
 
@@ -146,6 +147,12 @@ chrome.windows.onRemoved.addListener((windowId) => {
     triggerSave();
 });
 
+// Eventos de redimensionamiento o movimiento de ventanas
+chrome.windows.onBoundsChanged.addListener(() => {
+    if (isRestoring) return;
+    triggerSave();
+});
+
 // Guardar al instalar o actualizar la extensión
 chrome.runtime.onInstalled.addListener(() => {
     saveCurrentTabs();
@@ -194,26 +201,30 @@ async function restoreSession() {
                 targetWindowId = initialWindow.id;
                 firstTabId = initialWindow.tabs?.[0]?.id || null;
 
-                // Posicionar la ventana inicial en su monitor original
+                // Posicionar y redimensionar la ventana inicial
                 if (typeof winData.left === 'number' && typeof winData.top === 'number') {
                     try {
-                        if (winData.state === 'maximized') {
-                            await chrome.windows.update(initialWindow.id, {
-                                left: winData.left,
-                                top: winData.top,
-                                width: winData.width || 1000,
-                                height: winData.height || 700,
-                                state: 'normal'
-                            });
+                        const isMax0 = winData.state === 'maximized' || 
+                                       (typeof winData.top === 'number' && winData.top < 0 && winData.top >= -12) ||
+                                       (typeof winData.width === 'number' && winData.width >= 1900 && winData.height >= 1040 && winData.top <= 0);
+
+                        const safeLeft0 = isMax0 ? ((winData.left < 0 ? 0 : winData.left) + 40) : winData.left;
+                        const safeTop0 = isMax0 ? 40 : winData.top;
+                        const safeWidth0 = isMax0 ? 1100 : (winData.width || 1100);
+                        const safeHeight0 = isMax0 ? 700 : (winData.height || 700);
+
+                        // Redimensionar EXPLÍCITAMENTE en estado normal para fijar el tamaño restaurado (rcNormalPosition) en Windows
+                        await chrome.windows.update(initialWindow.id, {
+                            state: 'normal',
+                            left: safeLeft0,
+                            top: safeTop0,
+                            width: safeWidth0,
+                            height: safeHeight0
+                        });
+
+                        if (isMax0) {
+                            await new Promise(r => setTimeout(r, 150));
                             await chrome.windows.update(initialWindow.id, { state: 'maximized' });
-                        } else {
-                            await chrome.windows.update(initialWindow.id, {
-                                left: winData.left,
-                                top: winData.top,
-                                width: winData.width,
-                                height: winData.height,
-                                state: winData.state || 'normal'
-                            });
                         }
                     } catch (posErr) {
                         console.warn('TabRescue: No se pudo reposicionar ventana inicial:', posErr);
@@ -221,29 +232,52 @@ async function restoreSession() {
                 }
             } else {
                 // Crear nueva ventana posicionada en el monitor correspondiente
+                const isMax = winData.state === 'maximized' || 
+                              (typeof winData.top === 'number' && winData.top < 0 && winData.top >= -12) ||
+                              (typeof winData.width === 'number' && winData.width >= 1900 && winData.height >= 1040 && winData.top <= 0);
+
+                const baseLeft = (typeof winData.left === 'number') ? winData.left : 0;
+                const baseTop = (typeof winData.top === 'number') ? winData.top : 0;
+
+                const safeLeft = isMax ? (baseLeft + 50) : baseLeft;
+                const safeTop = isMax ? 50 : baseTop;
+                const safeWidth = isMax ? 1100 : (winData.width || 1100);
+                const safeHeight = isMax ? 700 : (winData.height || 700);
+
                 const createParams = {
                     url: winData.tabs[0].url,
-                    focused: false
+                    left: safeLeft,
+                    top: safeTop,
+                    width: safeWidth,
+                    height: safeHeight,
+                    state: 'normal',
+                    focused: true
                 };
-
-                if (typeof winData.left === 'number' && typeof winData.top === 'number') {
-                    createParams.left = winData.left;
-                    createParams.top = winData.top;
-                    if (winData.width) createParams.width = winData.width;
-                    if (winData.height) createParams.height = winData.height;
-                }
-
-                // Para monitores secundarios: crear como 'normal' en sus coordenadas primero
-                createParams.state = winData.state === 'maximized' ? 'normal' : (winData.state || 'normal');
 
                 const newWindow = await chrome.windows.create(createParams);
                 targetWindowId = newWindow.id;
 
-                if (winData.state === 'maximized') {
+                // Redimensionar EXPLÍCITAMENTE la ventana creada en estado 'normal'
+                // Esto fija de forma garantizada el rcNormalPosition en Windows DWM para cuando se mueva o desmaximice
+                try {
+                    await chrome.windows.update(targetWindowId, {
+                        state: 'normal',
+                        left: safeLeft,
+                        top: safeTop,
+                        width: safeWidth,
+                        height: safeHeight
+                    });
+                } catch (resizeErr) {
+                    console.warn('TabRescue: No se pudo fijar tamaño normal en ventana secundaria:', resizeErr);
+                }
+
+                if (isMax) {
+                    // Breve pausa para que Windows registre el tamaño normal antes de maximizar
+                    await new Promise(r => setTimeout(r, 150));
                     try {
                         await chrome.windows.update(targetWindowId, { state: 'maximized' });
                     } catch (maxErr) {
-                        console.warn('TabRescue: No se pudo maximizar ventana:', maxErr);
+                        console.warn('TabRescue: No se pudo maximizar ventana secundaria:', maxErr);
                     }
                 }
 
@@ -329,6 +363,14 @@ async function restoreSession() {
                 }
             }
         }
+
+        // Devolver el foco a la ventana principal inicial
+        if (initialWindow?.id) {
+            try {
+                await chrome.windows.update(initialWindow.id, { focused: true });
+            } catch (_) {}
+        }
+
         return { success: true };
     } catch (error) {
         console.error('TabRescue: Error durante la restauración:', error);
