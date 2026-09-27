@@ -1,0 +1,154 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <!-- Background Shield Gradient -->
+    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7" />
+      <stop offset="50%" stop-color="#0369a1" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+
+    <!-- Shield Border Gradient -->
+    <linearGradient id="borderGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#7dd3fc" />
+      <stop offset="70%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+
+    <!-- Tab 1 Gradient (Cyan) -->
+    <linearGradient id="tab1Grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+
+    <!-- Tab 2 Gradient (Emerald Group) -->
+    <linearGradient id="tab2Grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#34d399" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+
+    <!-- Lifebuoy Gradient -->
+    <linearGradient id="buoyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#f1f5f9" />
+    </linearGradient>
+
+    <!-- Lifebuoy Orange Bands -->
+    <linearGradient id="bandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fb923c" />
+      <stop offset="100%" stop-color="#ea580c" />
+    </linearGradient>
+
+    <!-- Glow & Shadow -->
+    <filter id="shieldShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#0284c7" flood-opacity="0.35" />
+    </filter>
+    
+    <filter id="iconShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000000" flood-opacity="0.4" />
+    </filter>
+  </defs>
+
+  <!-- Outer Shield -->
+  <path d="M 64 10 
+           C 93 10, 114 20, 114 44 
+           C 114 83, 89 107, 64 118 
+           C 39 107, 14 83, 14 44 
+           C 14 20, 35 10, 64 10 Z"
+        fill="url(#shieldGrad)"
+        stroke="url(#borderGrad)"
+        stroke-width="4.5"
+        stroke-linejoin="round"
+        filter="url(#shieldShadow)" />
+
+  <!-- Subtle Shield Inner Highlight -->
+  <path d="M 64 16 
+           C 89 16, 107 24, 107 45 
+           C 107 79, 85 100, 64 110 
+           C 43 100, 21 79, 21 45 
+           C 21 24, 39 16, 64 16 Z"
+        fill="none"
+        stroke="#ffffff"
+        stroke-width="1.2"
+        stroke-opacity="0.25" />
+
+  <!-- Back Window (Represents Multi-Monitor / 2nd Window) -->
+  <rect x="30" y="34" width="68" height="44" rx="6"
+        fill="#0f172a"
+        fill-opacity="0.6"
+        stroke="#38bdf8"
+        stroke-width="1.5"
+        stroke-dasharray="3 2"
+        stroke-opacity="0.5" />
+
+  <!-- Front Browser Window Card -->
+  <g filter="url(#iconShadow)">
+    <rect x="25" y="44" width="78" height="48" rx="7"
+          fill="#090d16"
+          stroke="#38bdf8"
+          stroke-width="2" />
+
+    <!-- Window Titlebar Line -->
+    <line x1="25" y1="60" x2="103" y2="60"
+          stroke="rgba(255, 255, 255, 0.12)"
+          stroke-width="1.5" />
+
+    <!-- Window Dots -->
+    <circle cx="33" cy="52" r="2" fill="#ef4444" />
+    <circle cx="39" cy="52" r="2" fill="#eab308" />
+    <circle cx="45" cy="52" r="2" fill="#22c55e" />
+
+    <!-- Tab 1 (Cyan Group) -->
+    <path d="M 52 60 L 52 50 C 52 48.5, 53.5 47, 55 47 L 70 47 C 71.5 47, 73 48.5, 73 50 L 73 60 Z"
+          fill="url(#tab1Grad)" />
+    <circle cx="58" cy="53.5" r="1.5" fill="#ffffff" />
+    <rect x="62" y="52.5" width="7" height="2" rx="1" fill="#ffffff" fill-opacity="0.9" />
+
+    <!-- Tab 2 (Emerald Group) -->
+    <path d="M 75 60 L 75 51 C 75 49.5, 76.5 48.5, 78 48.5 L 91 48.5 C 92.5 48.5, 94 49.5, 94 51 L 94 60 Z"
+          fill="url(#tab2Grad)" />
+    <circle cx="80" cy="54" r="1.5" fill="#ffffff" />
+    <rect x="84" y="53" width="6" height="2" rx="1" fill="#ffffff" fill-opacity="0.9" />
+
+    <!-- Window Content Area Hint Lines -->
+    <rect x="33" y="68" width="28" height="4" rx="2" fill="#38bdf8" fill-opacity="0.3" />
+    <rect x="33" y="76" width="20" height="3" rx="1.5" fill="#64748b" fill-opacity="0.4" />
+    <rect x="33" y="82" width="24" height="3" rx="1.5" fill="#64748b" fill-opacity="0.3" />
+  </g>
+
+  <!-- Rescue Lifebuoy Badge (Bottom Right) -->
+  <g filter="url(#iconShadow)">
+    <!-- Outer Ring -->
+    <circle cx="84" cy="84" r="19"
+            fill="url(#buoyGrad)"
+            stroke="#0f172a"
+            stroke-width="2.5" />
+
+    <!-- Orange Rescue Bands -->
+    <!-- Top Band -->
+    <path d="M 80 65.5 C 82.5 65.2, 85.5 65.2, 88 65.5 L 87 73 C 85 72.8, 83 72.8, 81 73 Z"
+          fill="url(#bandGrad)" />
+    <!-- Bottom Band -->
+    <path d="M 80 102.5 C 82.5 102.8, 85.5 102.8, 88 102.5 L 87 95 C 85 95.2, 83 95.2, 81 95 Z"
+          fill="url(#bandGrad)" />
+    <!-- Left Band -->
+    <path d="M 65.5 80 C 65.2 82.5, 65.2 85.5, 65.5 88 L 73 87 C 72.8 85, 72.8 83, 73 81 Z"
+          fill="url(#bandGrad)" />
+    <!-- Right Band -->
+    <path d="M 102.5 80 C 102.8 82.5, 102.8 85.5, 102.5 88 L 95 87 C 95.2 85, 95.2 83, 95 81 Z"
+          fill="url(#bandGrad)" />
+
+    <!-- Inner Hole -->
+    <circle cx="84" cy="84" r="8.5"
+            fill="#0369a1"
+            stroke="#0f172a"
+            stroke-width="2" />
+
+    <!-- Center Rescue Spark/Check -->
+    <path d="M 80.5 84 L 83 86.5 L 87.5 81.5"
+          fill="none"
+          stroke="#ffffff"
+          stroke-width="2.2"
+          stroke-linecap="round"
+          stroke-linejoin="round" />
+  </g>
+</svg>

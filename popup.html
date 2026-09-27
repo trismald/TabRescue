@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TabRescue</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <!-- Header -->
+    <header class="popup-header">
+      <div class="brand">
+        <img src="icon.svg" alt="TabRescue Logo" class="brand-logo" id="brandLogo">
+        <div class="brand-text">
+          <div class="brand-title-row">
+            <h1 class="brand-title">TabRescue</h1>
+            <span class="version-tag">v1.3</span>
+          </div>
+          <p class="brand-subtitle">Protección multi-monitor de sesión</p>
+        </div>
+      </div>
+      <div class="status-pill active" id="statusPill" title="La sesión se guarda continuamente en segundo plano">
+        <span class="status-dot"></span>
+        <span class="status-text" id="statusText">Activo</span>
+      </div>
+    </header>
+
+    <!-- Notification Toast -->
+    <div class="toast hidden" id="toastMessage"></div>
+
+    <!-- Quick Stats -->
+    <section class="stats-grid">
+      <div class="stat-card" id="cardWindows">
+        <span class="stat-icon">🖥️</span>
+        <div class="stat-data">
+          <span class="stat-value" id="statWindowsCount">-</span>
+          <span class="stat-label">Ventanas</span>
+        </div>
+      </div>
+      <div class="stat-card" id="cardTabs">
+        <span class="stat-icon">📑</span>
+        <div class="stat-data">
+          <span class="stat-value" id="statTabsCount">-</span>
+          <span class="stat-label">Pestañas</span>
+        </div>
+      </div>
+      <div class="stat-card" id="cardGroups">
+        <span class="stat-icon">🏷️</span>
+        <div class="stat-data">
+          <span class="stat-value" id="statGroupsCount">-</span>
+          <span class="stat-label">Grupos</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Session Details / Windows Breakdown -->
+    <section class="windows-section">
+      <div class="section-header">
+        <h2 class="section-title">Distribución Guardada</h2>
+        <span class="last-saved-badge" id="lastSavedBadge">Guardado recientemente</span>
+      </div>
+      <div class="windows-list" id="windowsList">
+        <div class="loading-placeholder">Cargando distribución...</div>
+      </div>
+    </section>
+
+    <!-- Action Buttons -->
+    <section class="actions-section">
+      <button class="btn btn-primary" id="btnSaveNow" title="Fuerza un guardado inmediato del estado actual">
+        <span class="btn-icon">💾</span>
+        <span class="btn-text">Guardar Ahora</span>
+      </button>
+      <button class="btn btn-secondary" id="btnRestoreNow" title="Restaura la sesión guardada inmediatamente">
+        <span class="btn-icon">⚡</span>
+        <span class="btn-text">Restaurar Sesión</span>
+      </button>
+    </section>
+
+    <!-- Footer info -->
+    <footer class="popup-footer">
+      <div class="footer-tip">
+        <span class="tip-icon">🛡️</span>
+        <span class="tip-text">Tolerancia de cierre: <strong>60s</strong> entre ventanas con "X"</span>
+      </div>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
